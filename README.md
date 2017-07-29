@@ -7,7 +7,7 @@
 although i have a slightly customised firmadyne, which i will also fork.
 Still A work in Progress and will update as much as i can.
 but basicaly my scripts act as wrappers for firmadyne in the same way fat does execpt my scripts allow a debug route which allows the user to see the error types so that they can get their fimware running.
-+ Checks for 
+*** Checks for 
 + Kernel line up issues
 + cp
 + mknod errors
