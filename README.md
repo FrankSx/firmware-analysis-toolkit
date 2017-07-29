@@ -79,8 +79,8 @@ vi fat.py
 Here, edit the [line number 25](https://github.com/FrankSx/firmware-analysis-toolkit/blob/master/fat.sh#L9) which is `firmadyne_path = '/root/tools/firmadyne'` to the correct path in your system.
 
 ### Setting up Firmware-mod-Kit 
-## This May have been fixed in FMK's lastest revisions ###
-## As The New FMK Runs on The Latest Binwalk ###
+This May have been fixed in FMK's lastest revision
+As The New FMK Runs on The Latest Binwalk 
 ```
 sudo apt-get install git build-essential zlib1g-dev liblzma-dev python-magic
 git clone https://github.com/brianpow/firmware-mod-kit.git
