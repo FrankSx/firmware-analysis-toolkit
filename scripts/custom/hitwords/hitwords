@@ -1,0 +1,700 @@
+#!/usr/bin/env bash
+set -u
+hw="./scripts/custom/hitwords"
+function usage {
+	echo "Usage: ./Hitwords 
+									      			(hitword/*)###Pattern File Sets Search Params!!!!
+	-qd     Quick Search Firmware Directory For Word 					(Search Param)
+	-qf     Quick Search Firmware File For Word 	 					(Search Param)
+	-d      Search Firmware Directory for Pattern in files 					(hitword/dir)
+	-f      Search Firmware File for Pattern 					 	(hitword/file)
+	-fm     Show More Around Those Patterns in Firmware File 			 	(hitword/file)
+	-qfm	Quick Show More around Word in Firmware file				 	(Search Param)
+	-qdm	Quick Show more Around Word Firmware Directory For Word				(Search Param)
+	-fwc	Search Word In Directory And Show File type and hashes				(Search Param)
+	-lwc	Search For Word In Directorys then Read Out Elf Info/ Links Based on Word	(Search Param)
+	-s      Search For Files With extensions in Firmware Directory				(hitword/ext)		
+	-p     	Search For Password Files in Firmware Directory					(hitword/passfile)
+	-pr	Search For Password Files in Firmware Directory and Read			(hitword/passfile)
+	-coms	Search for patterns matching comms list in files				(hitword/comms)
+	-conf  	Search for config files in directory 						(hitword/conffiles)
+	-ssl	Search and list all SSL related keys/hashes					(hitword/sslfiles)
+	-b	Search for important binaries							(hitword/binaries)
+	-md5    Search for MD5 hashes in files							(use -fwc)
+	-pem	Read Out Pem files from Directory						(Only Directory)
+	-crt	Read Out CRT files from Directory						(Only Directory)
+	-key	Read Out KEY files from Directory						(Only Directory)
+	-sh	Perform *.sh file search in directory						(Only Directory)
+	-bin	Perform *.bin file search in directory						(Only Directory)
+	-ip	Search for ip addresses in files						(Only Directory)
+				"
+	echo 
+	exit 1
+}
+# Check for arguments
+if [[ $# -gt 5 || $# -lt 1 ]]; then
+    usage
+fi
+############################################################
+#is it going to be easyier to either 
+#1)remove the file output unless user inputs command -------------------------------------------------
+
+# create functions that rely on the switch being present in the correct locations
+#:::::ie; If <Switch 1> AND <Switch 2> Are Equal To
+#	[if]   <#QuickFile> + (SPARAM) [AND] <#Output> + (Location)
+		#or
+#	[if]   <#QuickDir > + (SPARAM) [AND] <#Output> + (Location)
+#
+#############################################################
+####      Array
+function msg {
+    echo "$1" | tee -a $FILE
+}
+function hmsg {
+    echo "$1" | tee -a $hFILE
+}
+
+function getArray {
+    array=() # Create array
+    while IFS= read -r line
+    do
+        array+=("$line")
+    done < "$1"
+}
+
+function fchk {	# Remove previous file if it exists, is a file and doesn't point somewhere
+	if [[ -e "$FILE" && ! -h "$FILE" && -f "$FILE" ]]; then
+		command shred $FILE
+    		rm -f $FILE
+	fi
+}
+function hfchk {	# Remove previous file if it exists, is a file and doesn't point somewhere
+	if [[ -e "$hFILE" && ! -h "$hFILE" && -f "$hFILE" ]]; then
+    		command shred $hFILE
+		rm -f $hFILE
+	fi
+}
+#
+##########################
+# Set variables
+	FILE="hitwords.txt"
+	FIRMDIR=$2
+	hFILE="hitwords.txt"
+		
+	
+###############################FUNCTIONS#########################################
+#	
+#######################################Perform File searches with print bounds
+# -fm	##### Working
+function fsrch {
+				
+		msg "***Search for patterns in files***"
+		msg "Before"
+		read PRNB
+		msg "After"
+		read PRNA
+		getArray "$hw/hitword/file"
+		patterns=("${array[@]}")
+		for pattern in "${patterns[@]}"; do
+
+			if [[ $pattern = "####END####" ]]; then
+			msg ""
+				exit
+			else
+    				msg "############## $pattern"
+    				strings "$FIRMDIR" | zegrep "$pattern" -B "$PRNB" -A "$PRNA" | uniq | tee -a $FILE
+    				msg ""
+			fi
+		done
+		}
+################################### Directory search for Patterns
+# -d	###### Working 
+function dirsrch {
+		fchk
+		msg "Hitwords"
+		msg "***Search Directorys for Patterns in Files***"
+		getArray "$hw/hitword/dir"
+		patterns=("${array[@]}")
+		for pattern in "${patterns[@]}"; do
+
+			if [[ $pattern = "####END####" ]]; then
+			msg ""
+				exit
+
+			else
+    				msg "############## $pattern"
+    				grep -lsirnw $FIRMDIR -e "$pattern" | uniq | tee -a $FILE
+    				msg ""
+			fi
+		done
+		 }
+################################################# Perform Single Word Search
+# -qd	###### Working
+function qd {
+	
+		fchk
+		msg "Hitwords"
+		msg "***Quick Directorys Search for Word in Files***"
+		msg "Search Param:"
+			if [[ $WRD = "" ]]; then
+			msg "Enter a single or grep word/wordset "
+    				exit
+    			else
+    				msg "############## $WRD"
+    				grep -lsirnw $FIRMDIR -e "$WRD" | uniq | tee -a $FILE
+    				msg ""
+			fi
+		 }
+################################################### Perform Single Word file searches
+# -qf	##### Working
+function qf {
+		
+		fchk
+		msg "Hitwords"
+		msg "***Quick Search for Word in File***"
+		msg "Search Param:"
+			if [[ $WRD = "" ]]; then
+			msg "Enter a single or grep word/wordset "
+    				exit
+    			else
+    				msg "############## $WRD"
+    				strings "$FIRMDIR" | zegrep "$WRD" -B 0 -A 0 | uniq | tee -a $FILE
+    				msg ""
+			fi
+		}
+################################################### Perform file searches for extensions from list
+# -s	###### Working	
+function srch {
+		fchk
+		msg "***Perform file searches for extensions from list***"
+		getArray "$hw/hitword/ext"
+		patterns=("${array[@]}")
+		for pattern in "${patterns[@]}"; do
+
+			if [[ $pattern = "####END####" ]]; then
+			msg ""
+				exit
+			else
+    				msg "############## $pattern"
+    				find $FIRMDIR -name "*.$pattern" | tee -a $FILE 
+    				msg ""
+			fi
+		done
+		}
+################################################### Perform file searches
+# -f	###### Working	
+function wsrch {
+		fchk
+		msg "***Search for patterns from list in files***"
+		getArray "$hw/hitword/file"
+		patterns=("${array[@]}")
+		for pattern in "${patterns[@]}"; do
+
+			if [[ $pattern = "####END####" ]]; then
+			msg ""
+				exit
+			else
+    				msg "############## $pattern"
+    				strings -a "$FIRMDIR" | zegrep "$pattern" -B 0 -A 0 | uniq | tee -a $FILE
+    				msg ""
+			fi
+		done
+		}
+################################################### search and print function bits
+# -qfm	###### working	
+function qfm {
+		
+		fchk
+		msg "Hitwords"
+		msg "***Quick Search for Word in File***"
+		msg "Search Param:"
+			if [[ $WRD = "" ]]; then
+			msg "Enter a single or grep word/wordset "
+    				exit
+    			else
+				echo 'before:'
+				read PRNB
+				echo 'after:'
+				read PRNA
+    				msg "############## $WRD"
+    				strings "$FIRMDIR" | zegrep "$WRD" -B $PRNB -A $PRNA | uniq | tee -a $FILE
+    				msg ""
+			fi
+		}
+ ################################################# Perform Single Word directory file Search with bounds
+# -qdm	###### Working 
+function qdm {
+	
+		fchk
+		msg "Hitwords"
+		msg "***Quick Directorys Search for Word in Files***"
+			if [[ $WRD = "" ]]; then
+			msg "Enter a single or grep word/wordset "
+    				exit
+    			else
+    				echo 'before:'
+				read PRNB
+				echo 'after:'
+				read PRNA
+    				msg "############## $WRD"
+    				### CAN LISTING BECOME A FUNCTION?
+    		listings=( $(grep -lsirnw "$FIRMDIR" -e "$WRD") )
+    		: "${listings:=empty}"
+          	for listing in "${listings[@]}"; do
+          	msg "*********FILE*************************************************************"
+          	msg "$listing"
+          	msg "**************************************************************************"
+          	echo " "
+          	msg "****************************STRINGS**WITH**$WRD**************************"
+          	echo " "
+            	strings -a "$listing" | zegrep "$WRD" -B $PRNB -A $PRNA | uniq | tee -a $FILE
+             	msg " "
+             	msg " "
+					done
+			fi
+		 }
+	##grep -lsirnw $FIRMDIR -e "$WRD" | uniq | tee -a $FILE
+    	##msg ""
+    	##zegrep "$WRD" -B $PRNB -A $PRNA | uniq | tee -a $FILE
+
+ ################################################# 
+##Check For Word in [Dirs] Then	
+###				 Check File Type 
+##				Check For Hashes Contained in File
+
+
+# -fwc	###### Working 
+function fwc {
+	
+		fchk
+		msg "Hitwords"
+		msg "***Quick Directorys Search With Checks***"
+			if [[ $WRD = "" ]]; then
+			msg "Enter a single or grep word/wordset "
+    				exit
+    			fi
+    				echo 'before:'
+				read PRNB
+				echo 'after:'
+				read PRNA
+    				msg "############## $WRD"
+    				### CAN LISTING BECOME A FUNCTION?
+    		listings=( $(grep -lsirnw "$FIRMDIR" -e "$WRD") )
+    		: "${listings:=empty}"
+          	for listing in "${listings[@]}"; do
+          	msg "*********FILE*************************************************************"
+          	msg "$listing"
+          	msg "**************************************************************************"
+          	echo " "
+          	msg "***************FILE TYPE**************************************************"
+          	file -b "$listing" | tee -a $FILE
+		msg "***************Hashes**************************************************"
+		hashes=$($hw/Requires/hashfind-master/hashfind2.sh "$listing" )
+		
+		msg "$hashes"
+          	msg "****************************STRINGS**WITH**$WRD**************************"
+          	echo " "
+            	strings -a "$listing" | zegrep "$WRD" -B $PRNB -A $PRNA | uniq | tee -a $FILE
+             	msg " "
+             	msg " "
+					done
+			
+		 }
+	
+ ################################################# 
+##
+###				Lets Build an Libary Function Profiler
+##		  LibWordCheck		TODO:finish this
+function lwc {
+	
+		fchk
+		msg "Hitwords"
+		msg "***Quick LibWordCheck Search With Checks***"
+			if [[ $WRD = "" ]]; then
+			msg "Enter a single or grep word/wordset "
+    				exit
+    			fi
+    		listings=( $(grep -lsirnw "$FIRMDIR" -e "$WRD") )
+    		: "${listings:=empty}"
+          	for listing in "${listings[@]}"; do
+          	msg "*********FILE*************************************************************"
+          	msg "$listing"
+          	msg "**************************************************************************"
+          	echo " "
+          	msg "***************FILE TYPE**************************************************"
+          	file -b "$listing" | tee -a $FILE
+		msg "***************linked libraries**************************************************"
+		
+		rabin2 -i "$listing"
+		rabin2 -ls "$listing" | grep "$WRD"
+
+					done
+			
+		 }
+################################################### Perform comms file searches 
+# -coms	###### Working
+function coms {
+		fchk
+		msg "***Search for patterns from comms list in files***"
+		getArray "$hw/hitword/comms"
+		patterns=("${array[@]}")
+		for pattern in "${patterns[@]}"; do
+
+			if [[ $pattern = "####END####" ]]; then
+			msg ""
+				exit
+			else
+    				msg "############## $pattern"
+    				grep -lsirnw $FIRMDIR -e "$pattern" | uniq | tee -a $FILE
+    				msg ""
+			fi
+		done
+		}	
+
+#################################################### Search for password files
+# -p	##### Working
+function pword {
+		fchk
+		msg "***Firmware Directory***"
+		msg $FIRMDIR
+		msg "***Search for password files***"
+		getArray "$hw/hitword/passfiles"
+		passfiles=("${array[@]}")
+		for passfile  in "${passfiles[@]}"; do
+			
+			if [[ $passfile = "####END####" ]]; then
+			msg ""
+				exit
+			else
+		   		 msg "##################################### $passfile"
+		    		find $FIRMDIR -name $passfile | cut -c${#FIRMDIR}- | tee -a $FILE
+		    		msg ""
+			fi
+		done
+		}
+################################################### Perform Password File Find And Read
+# -pr	##### Working		
+function pread {
+		getArray "$hw/tmp"
+		locats=("${array[@]}")
+		for locat in "${locats[@]}"; do
+		if [[ $passfile = " " ]]; then
+				exit
+			else
+			hmsg "_______________"
+			hmsg "$locat"
+			hmsg "---------------"
+			strings "$locat" | tee -a $hFILE
+			hmsg "---------------"
+		fi
+		done
+		}
+
+################################################### Perform Password TMP File Find 
+# -pr	##### Working	
+function pwordread {
+		FILE="$hw/tmp"
+		fchk
+		hfchk
+		echo "***Firmware Directory***"
+		echo $FIRMDIR
+		echo "***Search for password files***"
+		echo "###########################"
+		getArray "$hw/hitword/passfiles"
+		passfiles=("${array[@]}")
+		for passfile  in "${passfiles[@]}"; do
+			
+			if [[ $passfile = "####END####" ]]; then
+				echo "###########################"
+				pread
+				command shred $FILE
+				rm $FILE
+				exit
+			else
+		    		find $FIRMDIR -name $passfile | tee -a $FILE | tee -a $hFILE && hmsg " "
+			fi
+		done
+		}
+#######################################Search For MD5 FIXME-THIS IS SHIT
+# -md5 ##### Working
+function MD5 {
+	fchk
+	msg "***Search for Unix-MD5 hashes***"
+	echo "warning use only on files and shallow directories"
+	hashfind -n -m 1 -i "$FIRMDIR" | tee -a $FILE
+	}
+############################################## Search for SSL Related Files
+#-ssl  ##### Working
+function ssl {	
+		fchk
+		msg ""
+		if [[ -d "$FIRMDIR/etc/ssl" ]]; then
+    			msg "***List etc/ssl directory***"
+    			ls -l $FIRMDIR/etc/ssl | tee -a $FILE
+		fi
+
+		msg ""
+		msg "***Search for SSL related files***"
+		getArray "$hw/hitword/sslfiles"
+		sslfiles=("${array[@]}")
+		for sslfile in ${sslfiles[@]}; do
+		
+   		msg "##################################### $sslfile"
+		find "${FIRMDIR}" -name ${sslfile}; done
+
+		}
+############################################## Search for Nvram Related Files
+#-nv  ##### Working
+#function nvfind {	
+	#	fchk
+	
+	#	msg ""
+	#	msg "***Search for Nvram related files***"
+   	#	msg "##################################### $sslfile"
+	#	find "${FIRMDIR}" -name nvram ; done
+
+	#	}
+
+############################################## read Pem
+# -pem	##### Working
+function pemr {	
+		fchk
+		msg ""
+		msg "***Search And Read PEM files***"
+       certfiles=( $(find "${FIRMDIR}" -name "*.pem") )
+       : "${certfiles:=empty}"
+          for certfile in "${certfiles[@]}"; do
+             echo "$certfile" | tee -a $FILE
+             serialno=$(openssl x509 -in ""$certfile"" -serial -noout)
+             echo ""$serialno"" | tee -a $FILE
+             cat $certfile | tee -a $FILE
+	done
+ }
+############################################## read .CTR
+# -crt	##### Working
+function crtr {	
+		fchk
+		msg ""
+		msg "***Search And Read .CRT files***"
+       certfiles=( $(find "${FIRMDIR}" -name "*.crt") )
+       : "${certfiles:=empty}"
+          for certfile in "${certfiles[@]}"; do
+             echo "$certfile" | tee -a $FILE
+             serialno=$(openssl x509 -in ""$certfile"" -serial -noout)
+             echo ""$serialno"" | tee -a $FILE
+             cat $certfile | tee -a $FILE
+	done
+ }
+############################################## read .KEY
+# -key	##### Working
+function keyr {	
+		fchk
+		msg ""
+		msg "***Search And Read .KEY files***"
+       certfiles=( $(find "${FIRMDIR}" -name "*.key") )
+       : "${certfiles:=empty}"
+          for certfile in "${certfiles[@]}"; do
+             echo "$certfile" | tee -a $FILE
+             serialno=$(openssl x509 -in ""$certfile"" -serial -noout)
+             echo ""$serialno"" | tee -a $FILE
+             cat $certfile | tee -a $FILE
+	done
+ }
+############################################## Search for .CONF/.INI files
+# -conf	##### Working
+function conf {	
+		fchk
+		msg ""
+		msg "***Search for configuration files***"
+		getArray "$hw/hitword/conffiles"
+		conffiles=("${array[@]}")
+		for conffile in ${conffiles[@]}; do
+			    msg "##################################### $conffile"
+			    find $FIRMDIR -name $conffile | cut -c${#FIRMDIR}- | tee -a $FILE
+			    msg ""
+		done
+		}
+############################################## Search for .SH
+# -sh	##### Working
+function shsrch {
+	
+		fchk
+		msg ""
+		msg "***Search for shell scripts***"
+		msg "##################################### shell scripts"
+		find $FIRMDIR -name "*.sh" | cut -c${#FIRMDIR}- | tee -a $FILE
+		}
+############################################## Search for .bin
+# -bin	##### Working
+function bsrch {
+		fchk
+		msg ""
+		msg "***Search for other .bin files***"
+		msg "##################################### bin files"
+		find $FIRMDIR -name "*.bin" | cut -c${#FIRMDIR}- | tee -a $FILE
+		}
+############################################## Search for important binaries
+# -b	##### Working
+function b2srch {
+		fchk
+		msg ""
+		msg "***Search for important binaries***"
+		getArray "$hw/hitword/binaries"
+		binaries=("${array[@]}")
+		for binary in "${binaries[@]}"
+		do
+		    msg "##################################### $binary"
+		    find $FIRMDIR -name "$binary" | cut -c${#FIRMDIR}- | tee -a $FILE
+		    msg ""
+		done
+		}
+############################################## Search for important binaries
+# -ip	##### Working
+function ip {
+		fchk
+		msg ""
+		msg "***Search for ip addresses in directorys or files *** MAY BE SLOW ****"
+		msg "##################################### ip addresses"
+		 grep -sRIEho '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' $FIRMDIR | sort | tee -a $FILE
+	}
+####################
+##########Switches##
+####################
+
+
+#######Perform File searches with print bounds
+#	
+	if [[ $1 == "-fm" ]]; then 
+		fsrch
+	fi
+#######Perform Quick File searches with print bounds
+#	
+	if [[ $1 == "-qfm" ]]; then 
+		FIRMDIR=$3
+		WRD=$2
+		qfm
+	fi
+#######Perform Quick directory File searches with print bounds 
+#	
+	if [[ $1 == "-qdm" ]]; then 
+		FIRMDIR=$3
+		WRD=$2
+		qdm
+	fi
+#######Perform Quick directory File searches with print bounds FIXME rename FIXME fwc
+#	
+	if [[ $1 == "-fwc" ]]; then 
+		FIRMDIR=$3
+		WRD=$2
+		fwc
+	fi
+
+######################################### Perform Directory searches
+#
+	if [[ $1 == "-d" ]]; then
+		dirsrch
+	fi
+#
+#########################################
+
+#########################################  Perform Quick Single word directory searches
+#
+	if [[ $1 == "-qd" ]]; then
+	FIRMDIR=$3
+	WRD=$2
+		qd
+	fi
+	#
+#########################################  Perform Quick Single word file searches
+#
+	if [[ $1 == "-qf" ]]; then
+	FIRMDIR=$3
+	WRD=$2
+		qf
+	fi
+#
+#################################### Perform file searches
+#
+	if [[ $1 == "-s" ]]; then 
+		srch
+	fi
+#################################### Perform word in file searches
+#
+	if [[ $1 == "-f" ]]; then 
+		wsrch
+	fi
+######################################### Perform password file searches
+	if [[ $1 == "-p" ]]; then 
+		pword
+	fi
+#############################################	Perform password read searches
+	if [[ $1 == "-pr" ]]; then 
+		pwordread
+	fi
+################################################## Perform md5 hash searches
+	if [[ $1 == "-md5" ]]; then 
+		MD5
+	exit
+	fi
+################################################## Perform SSL searches
+	if [[ $1 == "-ssl" ]]; then 
+		ssl
+	exit
+	fi
+################################################## Perform PEM searches
+	if [[ $1 == "-pem" ]]; then 
+		pemr
+	exit
+	fi
+################################################## Perform CRT searches
+	if [[ $1 == "-crt" ]]; then 
+		crtr
+	exit
+	fi
+################################################## Perform KEY searches
+	if [[ $1 == "-key" ]]; then 
+		keyr
+	exit
+	fi
+################################################## Perform conf pattern/file in directory searches 
+	if [[ $1 == "-conf" ]]; then 
+		conf
+	fi
+################################################## Perform Comm pattern in directory searches
+	if [[ $1 == "-coms" ]]; then 
+		coms
+	exit
+	fi
+################################################## Perform *.sh search in directory 
+	if [[ $1 == "-sh" ]]; then 
+		shsrch
+	exit
+	fi
+################################################## Perform *.bin search in directory 
+	if [[ $1 == "-bin" ]]; then 
+		bsrch
+	exit
+	fi
+################################################## Perform binary search in directory 
+	if [[ $1 == "-b" ]]; then 
+		b2srch
+	exit
+	fi
+################################################## Perform binary search in directory 
+	if [[ $1 == "-ip" ]]; then 
+		ip
+	exit
+	fi
+#####################################################
+	if [[ $1 == "-lwc" ]]; then 
+		FIRMDIR=$3
+		WRD=$2
+		lwc
+	exit
+	fi
+#######################################Perform File 
+#	if [[ $3 == "-o" ]]; then
+#	FILE=$4
+#
+########
+ ####awk '{print "#####""\n"}'
