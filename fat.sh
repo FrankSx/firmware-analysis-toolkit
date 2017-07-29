@@ -61,9 +61,10 @@ function msg {
 function welcome {
 	fchk
 	msg "
-	Welcome to the Firmware Analysis Toolkit - v0.1
-	Offensive IoT Exploitation Training  - http://offensiveiotexploitation.com
-	By Attify - https://attify.com  | @attifyme
+	Welcome to the Firmware Analysis Toolkit - v1.0
+	Attify - https://attify.com  | @attifyme V0.1
+	FrankSx - https://github.com/Franksx V1.0
+		  https://frankhacks.blogspot.com
 	"
 }
 
@@ -181,9 +182,9 @@ function MKimage {
 		msg "Creating Image"
             msg "Executing command"
 		
- mk0=$( sudo ./scripts/makeImage.sh $IID)
+ 	mk0=$( sudo ./scripts/makeImage.sh $IID )
                             : "${mk0:=empty}"
-	        	if [ [ $mk0 == "empty" ] ] ; then
+	        	if [[ $mk0 == "empty" ]] ; then
                                 msg "The Image Was not Created correctly"
                                 exit
                         else    
@@ -237,6 +238,7 @@ netnumber=$(./scripts/makeNetwork.py -i "$IID" -q -o -a "$ARCH" -S "./scratch")
                 be run again to find any new issues coming from the emulation"
                 ./scripts/debugrun.sh  $ARCH $IID -debug
 		echo " We are back "
+		MKimage
 		fi	
 		
 }
