@@ -1,0 +1,29 @@
+/lib/modules/
+failed:
+Input/output error
+EXT2-fs error
+Illegal
+nvram_get_buf: Unable to open key:
+####END####
+you can store extra variables in this area to use later
+####END####
+/etc/init.d/rcS
+starting pid
+ssk:error
+
+error
+fatal
+####END####
+pt_table
+boot
+rom
+partion
+jaffs2
+filesystem
+ram
+rom
+mtd
+init
+block
+sda
+eeprom
