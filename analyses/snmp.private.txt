@@ -1,0 +1,2 @@
+getaddrinfo: .iso Name or service not known
+snmpwalk: Unknown host (.iso)
