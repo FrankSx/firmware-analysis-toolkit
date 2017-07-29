@@ -1,16 +1,13 @@
 # Firmware Analysis Toolkit 
 
-FAT is a toolkit built in order to help security researchers analyze and identify vulnerabilities in IoT and embedded device firmware. This is built in order to use for the "*[Offensive IoT Exploitation](http://offensiveiotexploitation.com/)*" training conducted by [Attify](https://attify.com). 
 
-_**Download AttifyOS**_
-
-[![AttifyOS download](https://i.ytimg.com/vi/nQdrVTcAPkI/hqdefault.jpg)](https://www.youtube.com/watch?v=nQdrVTcAPkI "Setting up AttifyOS")
 
 **Note:** 
 
 + As of now, it is simply a script to automate **[Firmadyne](https://github.com/firmadyne/firmadyne)** which is a tool used for firmware emulation. In case of any issues with the actual emulation, please post your issues in the [firmadyne issues](https://github.com/firmadyne/firmadyne/issues).  
 
-+ In case you are on **Kali** and are **facing issues with emulation**, it is recommended to use the AttifyOS Pre-Release VM downloadable from [here](http://tinyurl.com/attifyos), or alternatively you could do the above mentioned.  
+(( This Will Be Fixed in future Versions ))
++ In case you are on **Kali** and are **facing issues with emulation**, it is recommended to use the AttifyOS Pre-Release VM downloadable from [here](http://tinyurl.com/attifyos), or alternatively you could do the above mentioned.  (( This Will Be Fixed in future Versions ))
 
 ---
 
@@ -21,10 +18,11 @@ Firmware Analysis Toolkit is build on top of the following existing tools and pr
 3. [Firmware-Mod-Kit](https://github.com/mirror/firmware-mod-kit)
 4. [MITMproxy](https://mitmproxy.org/) 
 5. [Firmwalker](https://github.com/craigz28/firmwalker) 
+6. [Hitwords](https://github.com/FrankSx/Hitwords)
 
 ## Setup instructions 
 
-If you are a training student and setting this as a pre-requirement for the training, it is recommended to install the tools in the /root/tools folder, and individual tools in there. 
+it is recommended to install the tools in the /root/tools folder, and individual tools in there. 
 
 ### Install Binwalk 
 
@@ -87,16 +85,17 @@ That is all the setup needed in order to run FAT.
 
 Once all the above steps have been done, go ahead and run 
 
-`python fat.py` 
+`fat.sh 
 
 + It will ask you to enter the absolute path of the firmware. Here enter the firmware path including the file name. 
 
 + The script will then ask you to enter the brand name. Enter the brand which the firmware belongs to. This is for pure database storage and categorisational purposes. 
 
++ it will then ask for extraction options to proceed with
+
 + It will ask for password a couple of times, enter `firmadyne` in all the steps (except for your system password, obviously!)
 
 + The second last step will give you an IP address. Note it down. 
 
-+ Finally, it will say that running the firmware. Wait for a couple of seconds here, and then ping the IP which was shown in the previous step, or open in the browser. 
++ Needs The Last Parts cleaned up to enable fat.sh to hit the run functions
 
-***Congrats! The firmware is finally emulated. The next step will be to setup the proxy in Firefox and run mitmproxy.***
