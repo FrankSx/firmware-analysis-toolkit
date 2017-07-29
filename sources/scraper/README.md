@@ -1,9 +1,10 @@
 
-Please Download These From Firmadyne if you are interested 
-but this is out of our scope for fat and is bloating
+
 
 Introduction
 ============
+Please Download This From Firmadyne if you are interested 
+but this is out of our scope for fat and is bloating
 
 This is a firmware scraper that aims to download firmware images and associated
 metadata from supported device vendor websites.
