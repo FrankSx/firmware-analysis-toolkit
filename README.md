@@ -133,11 +133,11 @@ Once all the above steps have been done, go ahead and run
 
 + it will then ask for extraction options to proceed with:
  Make a Extraction Option Selection from Following:
-   -pk    No Parallel/Kernel (Only Gets File System)(Default)
-   -fk    No File/Kernel     (Only Gets Parallel)
-   -np    No Parallel        (Gets Both FS And Kernel) 
-   -nf    No File System     (Gets Both Parallel And Kernel)
-   -nk    No Kernel          (Gets Both Parallel And Kernel)"
+   +-pk    No Parallel/Kernel (Only Gets File System)(Default)
+   +-fk    No File/Kernel     (Only Gets Parallel)
+   +-np    No Parallel        (Gets Both FS And Kernel) 
+   +-nf    No File System     (Gets Both Parallel And Kernel)
+   +-nk    No Kernel          (Gets Both Parallel And Kernel)"
 
 + It will ask for password a couple of times, enter `firmadyne` in all the steps (except for your system password, obviously!)
 
