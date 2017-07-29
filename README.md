@@ -3,6 +3,21 @@
 
 
 **Note:** 
++ This Script will help with firmwares that produce errors in fat or firmadyne 
+although i have a slightly customised firmadyne, which i will also fork.
+Still A work in Progress and will update as much as i can.
+but basicaly my scripts act as wrappers for firmadyne in the same way fat does execpt my scripts allow a debug route which allows the user to see the error types so that they can get their fimware running.
+Checks for 
+Kernel line up issues
+cp
+mknod errors
+mkdir errors
+fs errors
+nvram errors
+conf errors 
+rcS Hits
+smd errors ( may require debugging )
+ssk errors ( may require debugging )
 
 + As of now, it is simply a script to automate **[Firmadyne](https://github.com/firmadyne/firmadyne)** which is a tool used for firmware emulation. In case of any issues with the actual emulation, please post your issues in the [firmadyne issues](https://github.com/firmadyne/firmadyne/issues).  
 
