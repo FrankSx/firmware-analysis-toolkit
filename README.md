@@ -2,11 +2,13 @@
 
 
 
+
 **Note:** 
 + This Script will help with firmwares that produce errors in fat or firmadyne 
-although i have a slightly customised firmadyne, which i will also fork.
+although i have a slightly customised firmadyne.
 Still A work in Progress and will update as much as i can.
 but basicaly my scripts act as wrappers for firmadyne in the same way fat does execpt my scripts allow a debug route which allows the user to see the error types so that they can get their fimware running.
+
 
 +*** Checks for 
 + Kernel line up issues
@@ -21,7 +23,7 @@ but basicaly my scripts act as wrappers for firmadyne in the same way fat does e
 + ssk errors ( may require debugging ) ## Still to be implemented
 
 **Note:** 
-+ As of now, it is simply a Intergration of **[Firmadyne](https://github.com/firmadyne/firmadyne)** which is a tool used for firmware emulation. Please Send All Errors Relating To Emulation to me  
++ As of now, it is simply a script to automate **[Firmadyne](https://github.com/firmadyne/firmadyne)** which is a tool used for firmware emulation. In case of any issues with the actual emulation, please post your issues in the [firmadyne issues](https://github.com/firmadyne/firmadyne/issues).  
 
 (( This Will Be Fixed in future Versions ))
 + In case you are on **Kali** and are **facing issues with emulation**, it is recommended to use the AttifyOS Pre-Release VM downloadable from [here](http://tinyurl.com/attifyos), or alternatively you could do the above mentioned.  (( This Will Be Fixed in future Versions ))
@@ -61,28 +63,30 @@ sudo -H pip install git+https://github.com/ahupp/python-magic
 ```
 
 Note: Alternatively, you could also do a `sudo apt-get install binwalk`
-     also ensure you have sasquatch installed  
-     [sasquatch](https://github.com/devttys0/sasquatch)
+
 
 ### Setting up firmadyne 
 
 `sudo apt-get install busybox-static fakeroot git kpartx netcat-openbsd nmap python-psycopg2 python3-psycopg2 snmp uml-utilities util-linux vlan qemu-system-arm qemu-system-mips qemu-system-x86 qemu-utils`
 
-`git clone --recursive https://github.com/firmadyne/firmadyne.git`
+run download.sh to get the binaries needed for emulation
 
-`cd ./firmadyne; ./download.sh`
+`cd ./fat; ./download.sh`
 
 Edit `firmadyne.config` and make the `FIRMWARE_DIR` point to the current location of Firmadyne folder. 
 
 ### Setting up FAT
 
 ```
-git clone https://github.com/attify/firmware-analysis-toolkit
-mv firmware-analysis-toolkit/fat.py .
-mv firmware-analysis-toolkit/reset.sh .
-chmod +x fat.py 
+mkdir in root called tools
+
+git clone https://github.com/FrankSx/firmware-analysis-toolkit
+
+mv /firmware-analysis-toolkit /fat
+chmod +x fat.sh
+chmod +x debugrun.sh 
 chmod +x reset.sh
-vi fat.py
+vi fat.sh
 ```
 Here, edit the [line number 25](https://github.com/FrankSx/firmware-analysis-toolkit/blob/master/fat.sh#L9) which is `firmadyne_path = '/root/tools/firmadyne'` to the correct path in your system.
 
@@ -140,7 +144,7 @@ Once all the above steps have been done, go ahead and run
 + The script will then ask you to enter the brand name. Enter the brand which the firmware belongs to. This is for pure database storage and categorisational purposes. 
 
 + it will then ask for extraction options to proceed with:
- Make a Extraction Option Selection from Following:
+       Make a Extraction Option Selection from Following:
    +-pk    No Parallel/Kernel (Only Gets File System)(Default)
    +-fk    No File/Kernel     (Only Gets Parallel)
    +-np    No Parallel        (Gets Both FS And Kernel) 
@@ -151,7 +155,7 @@ Once all the above steps have been done, go ahead and run
 
 + this step will run the firmware and try and find a network interface . if it does not it will ask if you would like to continue down the debug path . 
 
-+IF network interface has been found then It will Be Run, Press any key to exit
++ if network interface has been found then It will Be Run, Press any key to exit
 
 + if the network was not found debugrun.sh will be run it will return to the 
 fat script when complete to try and get a network again <<< this isnt working yet >>>>>
@@ -159,10 +163,12 @@ debugrun.sh will check for errors in the serial log and print them to the termin
 you can select if you would like to print out what was found searching for the list
 found in hitwords/hitword/blerror
 
-+To View The Config List if Avail?
-+To View The nvram realated files if Avail?
-+To View The rcS & profile file if Avail?
-+To See What kernel is avail on the sys and what was requested?
++ To View The Config List if Avail?
++ To View The nvram realated files if Avail?
++ To View The rcS & profile file if Avail?
++ To See What kernel is avail on the sys and what was requested?
+
+
 
 ### More To Come Including:
 
