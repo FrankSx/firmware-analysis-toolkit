@@ -183,13 +183,13 @@ function MKimage {
 		
  mk0=$( sudo ./scripts/makeImage.sh $IID)
                             : "${mk0:=empty}"
-	        	if [ $mk0 == "empty" ] ; then
+	        	if [ [ $mk0 == "empty" ] ] ; then
                                 msg "The Image Was not Created correctly"
                                 exit
                         else    
 				frun
                         fi
-		 msg "The Image Was not Created correctly"
+		 msg "The Image Was Created correctly and Run"
 }
 #NOTE -------Here Should BE a dig and find Nv Ram ANd libs stuff in order to emulate better quicker without as much input from the user----
 ## but we can just be offered as a extra command or if the network fails to infer or find a console 
