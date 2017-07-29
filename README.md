@@ -21,7 +21,7 @@ but basicaly my scripts act as wrappers for firmadyne in the same way fat does e
 + ssk errors ( may require debugging ) ## Still to be implemented
 
 **Note:** 
-+ As of now, it is simply a script to automate **[Firmadyne](https://github.com/firmadyne/firmadyne)** which is a tool used for firmware emulation. In case of any issues with the actual emulation, please post your issues in the [firmadyne issues](https://github.com/firmadyne/firmadyne/issues).  
++ As of now, it is simply a Intergration of **[Firmadyne](https://github.com/firmadyne/firmadyne)** which is a tool used for firmware emulation. Please Send All Errors Relating To Emulation to me  
 
 (( This Will Be Fixed in future Versions ))
 + In case you are on **Kali** and are **facing issues with emulation**, it is recommended to use the AttifyOS Pre-Release VM downloadable from [here](http://tinyurl.com/attifyos), or alternatively you could do the above mentioned.  (( This Will Be Fixed in future Versions ))
@@ -31,12 +31,19 @@ but basicaly my scripts act as wrappers for firmadyne in the same way fat does e
 Firmware Analysis Toolkit is build on top of the following existing tools and projects : 
 
 1. [Firmadyne](https://github.com/firmadyne/firmadyne)
-2. [Binwalk](https://github.com/devttys0/binwalk) 
+|-- Intergrated ( Could be rewritten to be placed closer into scripts folder)
+2. [Binwalk]( binwalk) 
+|-- Used By The Extractor Module
 3. [Firmware-Mod-Kit](https://github.com/mirror/firmware-mod-kit)
+|-- Unsure where this is used someone advise
 4. [MITMproxy](https://mitmproxy.org/) 
-5. [Firmwalker](https://github.com/craigz28/firmwalker) 
-6. [Hitwords](https://github.com/FrankSx/Hitwords)-----|
-7. [Hashfind](https://github.com/rurapenthe/hashfind)--|
+|-- Used By Analysis toolkit(?) 
+5. [Firmwalker](https://github.com/craigz28/firmwalker)
+|-- Unsure where this is used someone advise so i can redirect to hitwords 
+6. [Hitwords](https://github.com/FrankSx/Hitwords)
+|-- Intergrated ( Could be rewritten to be placed closer into scripts folder)
+7. [Hashfind](https://github.com/rurapenthe/hashfind)||-- Intergrated
+|-- Intergrated ( Could be rewritten to be placed closer into scripts folder)
 
 ## Setup instructions 
 
@@ -54,7 +61,8 @@ sudo -H pip install git+https://github.com/ahupp/python-magic
 ```
 
 Note: Alternatively, you could also do a `sudo apt-get install binwalk`
-
+     also ensure you have sasquatch installed  
+     [sasquatch](https://github.com/devttys0/sasquatch)
 
 ### Setting up firmadyne 
 
@@ -155,3 +163,21 @@ found in hitwords/hitword/blerror
 +To View The nvram realated files if Avail?
 +To View The rcS & profile file if Avail?
 +To See What kernel is avail on the sys and what was requested?
+
+### More To Come Including:
+
++automatic(scripted) rcs fixes
+this will check if the resources file is fouling the boot,
+
+
++automatic(scripted)(as/permissed) makeimage.sh fix
+fix ext2 errors by creating the qemu image as a ext3
+
+
+
++automatic(scripted)(as/permissed) Kernel issue fix
+Umm This Ones A Bugger!!
+sometimes you can run into the problem that the kernel thats placed into
+the filesystem isnt numbered the same ( Different versions ) 
+The Original Kernel can be placed in next to the firmadyne one in the modules folder
+and hopefully the resources lokking for it will be satisifyed 
