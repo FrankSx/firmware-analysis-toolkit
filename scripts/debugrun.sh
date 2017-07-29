@@ -98,7 +98,7 @@ function Finder {
 
 
 
-    if [[ $pattern = "nrvam" ]]; then
+    if [[ $pattern = "nvram" ]]; then
 		nvram0="1"
             msg " nvram errors found may need to build a custom nvram lib "
             msg '
@@ -215,6 +215,14 @@ function options2 {
 	msg " Do you Want to See What kernel is avail on the sys? Y/N "
 	read yn3
 	
+
+  if [[ $nvram0 = "1" && $yn1 = "Y" ]] ; then
+	msg "		############## nvram related hits in file system ############### "
+      sudo $hitwords -fwc "nvram" $scratch/$IID/image/
+	msg " are you ready to continue "
+	read ct0
+	msg " "
+	fi
 	if [[ $conf = "1" && $yn0 = "Y" ]] ; then
 	msg "		############## config file locations ############### "
       sudo $hitwords -conf $scratch/$IID/image/
@@ -222,13 +230,7 @@ function options2 {
 	read ct0
 	msg " "
 	fi
-    if [[ $nvram0 = "1" && $yn1 = "Y" ]] ; then
-	msg "		############## nvram related hits in file system ############### "
-      sudo $hitwords -qdm nvram $scratch/$IID/image/
-	msg " are you ready to continue "
-	read ct0
-	msg " "
-	fi
+  
     if [[ $rcs = "1" && $yn2 = "Y" ]] ; then
        rcs0=( $( find $scratch/$IID/image/ -name rcS  ) )
 	pro0=( $( find $scratch/$IID/image/ -name profile  ) )
