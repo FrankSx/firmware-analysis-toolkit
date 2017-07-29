@@ -23,7 +23,7 @@ but basicaly my scripts act as wrappers for firmadyne in the same way fat does e
 + ssk errors ( may require debugging ) ## Still to be implemented
 
 **Note:** 
-+ As of now, it is simply a script to automate **[Firmadyne](https://github.com/firmadyne/firmadyne)** which is a tool used for firmware emulation. In case of any issues with the actual emulation, please post your issues in the [firmadyne issues](https://github.com/firmadyne/firmadyne/issues).  
++ it is a Intergration of **[Firmadyne](https://github.com/firmadyne/firmadyne)** which is a tool used for firmware emulation. Please Send All Errors Relating To Emulation to me   
 
 (( This Will Be Fixed in future Versions ))
 + In case you are on **Kali** and are **facing issues with emulation**, it is recommended to use the AttifyOS Pre-Release VM downloadable from [here](http://tinyurl.com/attifyos), or alternatively you could do the above mentioned.  (( This Will Be Fixed in future Versions ))
