@@ -92,19 +92,19 @@ function welcome {
     fi
     
    if [ $ext_opt = "-fk"  ] ; then
-       ext_GO= -b $firm_brand -sql 127.0.0.1 -nf -nk $firm_name images
+       ext_GO=" -b $firm_brand -sql 127.0.0.1 -nf -nk $firm_name images "
     fi
     
     if [ $ext_opt = "-np"  ] ; then
-       ext_GO= -b $firm_brand -sql 127.0.0.1 -np $firm_name images
+       ext_GO=" -b $firm_brand -sql 127.0.0.1 -np $firm_name images "
     fi
     
     if [ $ext_opt = "-nf"  ] ; then
-       ext_GO= -b $firm_brand -sql 127.0.0.1 -nf $firm_name images
+       ext_GO=" -b $firm_brand -sql 127.0.0.1 -nf $firm_name images "
     fi
     
     if [ $ext_opt = "-nk"  ] ; then
-       ext_GO= -b $firm_brand -sql 127.0.0.1 -nk $firm_name images
+       ext_GO=" -b $firm_brand -sql 127.0.0.1 -nk $firm_name images "
     fi
     
  }
@@ -191,8 +191,6 @@ function MKimage {
                         fi
 		 msg "The Image Was Created correctly and Run"
 }
-#NOTE -------Here Should BE a dig and find Nv Ram ANd libs stuff in order to emulate better quicker without as much input from the user----
-## but we can just be offered as a extra command or if the network fails to infer or find a console 
 
 ###########NOTE ------------------->Not DONE Untested
 function frun {
