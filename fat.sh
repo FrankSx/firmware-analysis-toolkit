@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-set -e
 set -u
 
 function usage { 
@@ -190,7 +189,7 @@ function MKimage {
                         else    
 				frun
                         fi
-		
+		 msg "The Image Was not Created correctly"
 }
 #NOTE -------Here Should BE a dig and find Nv Ram ANd libs stuff in order to emulate better quicker without as much input from the user----
 ## but we can just be offered as a extra command or if the network fails to infer or find a console 
@@ -214,7 +213,7 @@ sleep 1
 							"
 	msg "Hopefully Inferring network...	
 						"
-netnumber=$(./scripts/makeNetwork.py -i "$IID" -q -o -a "$ARCH" -S "./scratch/")
+netnumber=$(./scripts/makeNetwork.py -i "$IID" -q -o -a "$ARCH" -S "./scratch")
  : "${netnumber:=empty}"
 
 	msg "$netnumber"
@@ -228,6 +227,11 @@ netnumber=$(./scripts/makeNetwork.py -i "$IID" -q -o -a "$ARCH" -S "./scratch/")
 		 read CQ
 	else
 		CQ=0
+	fi
+        if [[ $checka != "Interfaces: "[]"" ]] ; then
+		msg "Got The Interface!"
+		echo "Continue Or Quit? "
+		sudo ./scratch/$IID/run.sh $ARCH
 	fi
             if [ $CQ == "C" ]; then
                 echo "After This Is Done Use -test to Start at this point again
@@ -247,12 +251,10 @@ function main {
     MKimage
 }
  if [ $1 == "-go" ]; then
+	quickr="no"
     main
 fi
  if [ $1 == "-test" ]; then
 	quickr="yes"
     frun
 fi
-
-
-##/home/oit/tools/fat/WNAP320 Firmware Version 2.0.3.ziptua
